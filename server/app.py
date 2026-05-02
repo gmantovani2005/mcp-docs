@@ -1,13 +1,19 @@
+import os
 import tomllib
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 from pathlib import Path
 
-DOCS_DIR = Path(__file__).parent.parent / "docs"
+load_dotenv()
+
+_docs_dir_env = os.getenv("MCP_DOCS_DIR")
+DOCS_DIR = Path(_docs_dir_env).resolve() if _docs_dir_env else Path(__file__).parent.parent / "docs"
 
 if not DOCS_DIR.exists():
     raise SystemExit(
-        f"Error: docs/ directory not found at {DOCS_DIR}\n"
-        "Clone the documentation repository into docs/ before starting the server."
+        f"Error: docs directory not found at {DOCS_DIR}\n"
+        "Set MCP_DOCS_DIR to the documentation directory path, "
+        "or clone the documentation repository into docs/."
     )
 
 _CONFIG_FILE = DOCS_DIR / "config.toml"

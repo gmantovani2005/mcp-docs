@@ -25,6 +25,18 @@ git clone <docs-repo-url> docs
 uv sync
 ```
 
+### 3. Configure environment variables (optional)
+
+Copy `.env.example` to `.env` and set `MCP_DOCS_DIR` if your documentation directory lives outside `docs/`:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MCP_DOCS_DIR` | `./docs` | Absolute or relative path to the documentation directory |
+
 ## docs/ directory structure
 
 The server auto-discovers categories from subdirectories. The only required file is `config.toml` at the root of `docs/`.
@@ -87,7 +99,8 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
   "mcpServers": {
     "my-project": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mcp-docs", "run", "main.py"]
+      "args": ["--directory", "/path/to/mcp-docs", "run", "main.py"],
+      "env": { "MCP_DOCS_DIR": "/path/to/your/docs" }
     }
   }
 }
@@ -97,6 +110,12 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 
 ```bash
 claude mcp add my-project -- uv --directory /path/to/mcp-docs run main.py
+```
+
+To pass `MCP_DOCS_DIR` when using Claude Code, add it to the server environment:
+
+```bash
+claude mcp add my-project -e MCP_DOCS_DIR=/path/to/your/docs -- uv --directory /path/to/mcp-docs run main.py
 ```
 
 ## Capabilities
