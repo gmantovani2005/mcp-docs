@@ -17,7 +17,29 @@ uv run main.py --transport sse --host 0.0.0.0 --port 8080  # custom host/port
 uv run mcp dev main.py                       # open MCP Inspector in browser
 ```
 
-No test suite or linter is configured. Config (`<docs-dir>/config.toml`) is read once at startup — restart the server to pick up changes. `MCP_DOCS_DIR` overrides the default `./docs` path and is loaded from `.env` via `python-dotenv`.
+No test suite or linter is configured. The container transport is always `streamable-http` on port `8080`.
+
+## Containers
+
+```bash
+# Build
+docker build -f .containers/Dockerfile -t mcp-docs:latest .
+podman build -f .containers/Dockerfile -t mcp-docs:latest .
+
+# Run locally (requires docs/ directory)
+docker compose up
+podman compose up
+
+# Kubernetes deploy
+kubectl apply -f .containers/deployment.yaml
+kubectl apply -f .containers/service.yaml
+```
+
+- `.containers/Dockerfile` — imagem de produção; usa `streamable-http` na porta `8080`
+- `.containers/deployment.yaml` — Kubernetes Deployment; edite `image:` antes de usar
+- `.containers/service.yaml` — Kubernetes Service (`ClusterIP`, porta `8080`)
+- `docker-compose.yaml` — execução local; monta `./docs` como volume somente-leitura em `/docs`
+- `.dockerignore` — exclui `.venv/`, `docs/`, `.git/`, `.env` do contexto de build Config (`<docs-dir>/config.toml`) is read once at startup — restart the server to pick up changes. `MCP_DOCS_DIR` overrides the default `./docs` path and is loaded from `.env` via `python-dotenv`.
 
 ## Configuration
 

@@ -118,6 +118,70 @@ To pass `MCP_DOCS_DIR` when using Claude Code, add it to the server environment:
 claude mcp add my-project -e MCP_DOCS_DIR=/path/to/your/docs -- uv --directory /path/to/mcp-docs run main.py
 ```
 
+## Containers
+
+### Build da imagem
+
+```bash
+# Docker
+docker build -f .containers/Dockerfile -t mcp-docs:latest .
+
+# Podman
+podman build -f .containers/Dockerfile -t mcp-docs:latest .
+```
+
+### Executar localmente com docker-compose
+
+Certifique-se de que o diretório `docs/` existe e está populado antes de iniciar:
+
+```bash
+docker compose up
+
+# ou com Podman
+podman compose up
+```
+
+O servidor ficará disponível em `http://localhost:8080/mcp`.
+
+### Executar o container manualmente
+
+```bash
+# Docker
+docker run --rm -p 8080:8080 -v ./docs:/docs:ro mcp-docs:latest
+
+# Podman
+podman run --rm -p 8080:8080 -v ./docs:/docs:ro mcp-docs:latest
+```
+
+### Deploy no Kubernetes
+
+Os arquivos de deployment e service estão em `.containers/`. Edite `image:` em `deployment.yaml` para apontar para o seu registry antes de aplicar.
+
+```bash
+kubectl apply -f .containers/deployment.yaml
+kubectl apply -f .containers/service.yaml
+```
+
+O Deployment referencia um `PersistentVolumeClaim` chamado `mcp-docs-pvc` para montar os arquivos de documentação em `/docs`. Crie e popule o PVC com a documentação antes de aplicar o Deployment.
+
+### Testando com o MCP Inspector
+
+Com o container rodando localmente (via `docker compose up` ou manualmente), o endpoint Streamable HTTP estará em `http://localhost:8080/mcp`.
+
+1. Abra o MCP Inspector:
+
+   ```bash
+   npx @modelcontextprotocol/inspector
+   ```
+
+2. No inspector, selecione o transport **Streamable HTTP**.
+
+3. Informe a URL: `http://localhost:8080/mcp`
+
+4. Clique em **Connect**.
+
+5. Teste as ferramentas disponíveis: `list_docs`, `read_doc`, `search_docs`.
+
 ## Capabilities
 
 ### Tools

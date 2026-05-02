@@ -1,0 +1,9 @@
+services:
+  mcp-docs:
+    image: localhost/mcp-docs:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docs:/docs:ro
+    environment:
+      MCP_DOCS_DIR: /docs
